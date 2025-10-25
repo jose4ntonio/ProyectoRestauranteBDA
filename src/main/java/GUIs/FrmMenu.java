@@ -90,7 +90,7 @@ public class FrmMenu extends JFrame {
         });
 
         btnReportes.addActionListener(e -> {
-            FrmReportes frm = new FrmReportes();
+            Reportes frm = new Reportes();
             frm.setVisible(true);
             this.dispose();
         });

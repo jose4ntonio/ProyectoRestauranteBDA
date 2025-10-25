@@ -2,53 +2,119 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Entidades; 
+package Entidades;
 
-import java.io.Serializable;
+import javax.persistence.*;
+import java.util.Date;
 
-/**
- *
- * @author Dell
- */
-@jakarta.persistence.Entity
-public class Comanda implements Serializable {
+@Entity
+@Table(name = "comanda")
+public class Comanda {
 
-    private static final long serialVersionUID = 1L;
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idComanda;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false)
+    private String folio;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date fecha;
+
+    @Column(nullable = false, length = 20)
+    private String estado;
+
+    @Column(nullable = false)
+    private double total;
+
+    @Column(length = 100)
+    private String mesa;
+
+    @Column(length = 100)
+    private String clienteFrecuente;
+
+    // ===== Constructores =====
+    public Comanda() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Comanda(String folio, Date fecha, String estado, double total, String mesa, String clienteFrecuente) {
+        this.folio = folio;
+        this.fecha = fecha;
+        this.estado = estado;
+        this.total = total;
+        this.mesa = mesa;
+        this.clienteFrecuente = clienteFrecuente;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    // ===== Getters y Setters =====
+    public int getIdComanda() {
+        return idComanda;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comanda)) {
-            return false;
-        }
-        Comanda other = (Comanda) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setIdComanda(int idComanda) {
+        this.idComanda = idComanda;
     }
 
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public String getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(String mesa) {
+        this.mesa = mesa;
+    }
+
+    public String getClienteFrecuente() {
+        return clienteFrecuente;
+    }
+
+    public void setClienteFrecuente(String clienteFrecuente) {
+        this.clienteFrecuente = clienteFrecuente;
+    }
+
+    // ===== toString =====
     @Override
     public String toString() {
-        return "Entidades.Comanda[ id=" + id + " ]";
+        return "Comanda{" +
+                "idComanda=" + idComanda +
+                ", folio='" + folio + '\'' +
+                ", fecha=" + fecha +
+                ", estado='" + estado + '\'' +
+                ", total=" + total +
+                ", mesa='" + mesa + '\'' +
+                ", clienteFrecuente='" + clienteFrecuente + '\'' +
+                '}';
     }
-    
 }
