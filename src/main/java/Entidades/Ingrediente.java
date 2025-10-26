@@ -4,55 +4,75 @@
  */
 package Entidades;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-/**
- *
- * @author Dell
- */
 @Entity
-public class Ingrediente implements Serializable {
+@Table(name = "ingrediente")
+public class Ingrediente {
 
-    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idIngrediente;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false, length = 100)
+    private String nombre;
+
+    @Column(length = 20, nullable = false)
+    private String unidad; // Ejemplo: "piezas", "gramos", "ml"
+
+    @Column(nullable = false)
+    private double stock;
+
+    // ===== Constructores =====
+    public Ingrediente() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Ingrediente(String nombre, String unidad, double stock) {
+        this.nombre = nombre;
+        this.unidad = unidad;
+        this.stock = stock;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    // ===== Getters y Setters =====
+    public int getIdIngrediente() {
+        return idIngrediente;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Ingrediente)) {
-            return false;
-        }
-        Ingrediente other = (Ingrediente) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setIdIngrediente(int idIngrediente) {
+        this.idIngrediente = idIngrediente;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
+
+    public double getStock() {
+        return stock;
+    }
+
+    public void setStock(double stock) {
+        this.stock = stock;
     }
 
     @Override
     public String toString() {
-        return "Entidades.Ingrediente[ id=" + id + " ]";
+        return "Ingrediente{" +
+                "idIngrediente=" + idIngrediente +
+                ", nombre='" + nombre + '\'' +
+                ", unidad='" + unidad + '\'' +
+                ", stock=" + stock +
+                '}';
     }
-    
 }

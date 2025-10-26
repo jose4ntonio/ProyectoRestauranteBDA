@@ -4,55 +4,115 @@
  */
 package Entidades;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-/**
- *
- * @author Dell
- */
 @Entity
-public class DetalleComanda implements Serializable {
+@Table(name = "detalle_comanda")
+public class DetalleComanda {
 
-    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idDetalleComanda;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false)
+    private int idComanda;
+
+    @Column(nullable = false)
+    private int idProducto;
+
+    @Column(nullable = false)
+    private int cantidad;
+
+    @Column(nullable = false)
+    private double precioUnitario;
+
+    @Column(nullable = false)
+    private double totalProducto;
+
+    @Column(length = 200)
+    private String comentarios; // Ej. "Sin picante", "Término medio", etc.
+
+    // ===== Constructores =====
+    public DetalleComanda() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public DetalleComanda(int idComanda, int idProducto, int cantidad, double precioUnitario, double totalProducto, String comentarios) {
+        this.idComanda = idComanda;
+        this.idProducto = idProducto;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.totalProducto = totalProducto;
+        this.comentarios = comentarios;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    // ===== Getters y Setters =====
+    public int getIdDetalleComanda() {
+        return idDetalleComanda;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetalleComanda)) {
-            return false;
-        }
-        DetalleComanda other = (DetalleComanda) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setIdDetalleComanda(int idDetalleComanda) {
+        this.idDetalleComanda = idDetalleComanda;
     }
 
+    public int getIdComanda() {
+        return idComanda;
+    }
+
+    public void setIdComanda(int idComanda) {
+        this.idComanda = idComanda;
+    }
+
+    public int getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public double getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(double precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
+    public double getTotalProducto() {
+        return totalProducto;
+    }
+
+    public void setTotalProducto(double totalProducto) {
+        this.totalProducto = totalProducto;
+    }
+
+    public String getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(String comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    // ===== toString =====
     @Override
     public String toString() {
-        return "Entidades.DetalleComanda[ id=" + id + " ]";
+        return "DetalleComanda{" +
+                "idDetalleComanda=" + idDetalleComanda +
+                ", idComanda=" + idComanda +
+                ", idProducto=" + idProducto +
+                ", cantidad=" + cantidad +
+                ", precioUnitario=" + precioUnitario +
+                ", totalProducto=" + totalProducto +
+                ", comentarios='" + comentarios + '\'' +
+                '}';
     }
-    
 }

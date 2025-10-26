@@ -4,55 +4,63 @@
  */
 package Entidades;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-/**
- *
- * @author Dell
- */
 @Entity
-public class Mesa implements Serializable {
+@Table(name = "mesa")
+public class Mesa {
 
-    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idMesa;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false, length = 50)
+    private String ubicacion; // Ejemplo: "Terraza", "Ventana", "General"
+
+    @Column(nullable = false)
+    private int capacidad;
+
+    // ===== Constructores =====
+    public Mesa() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Mesa(String ubicacion, int capacidad) {
+        this.ubicacion = ubicacion;
+        this.capacidad = capacidad;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    // ===== Getters y Setters =====
+    public int getIdMesa() {
+        return idMesa;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Mesa)) {
-            return false;
-        }
-        Mesa other = (Mesa) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setIdMesa(int idMesa) {
+        this.idMesa = idMesa;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
     }
 
     @Override
     public String toString() {
-        return "Entidades.Mesa[ id=" + id + " ]";
+        return "Mesa{" +
+                "idMesa=" + idMesa +
+                ", ubicacion='" + ubicacion + '\'' +
+                ", capacidad=" + capacidad +
+                '}';
     }
-    
 }
+

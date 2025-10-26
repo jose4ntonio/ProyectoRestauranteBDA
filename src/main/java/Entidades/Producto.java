@@ -4,55 +4,75 @@
  */
 package Entidades;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-/**
- *
- * @author Dell
- */
 @Entity
-public class Producto implements Serializable {
+@Table(name = "producto")
+public class Producto {
 
-    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idProducto;
 
-    public Long getId() {
-        return id;
+    @Column(nullable = false, length = 100, unique = true)
+    private String nombre;
+
+    @Column(nullable = false)
+    private double precio;
+
+    @Column(length = 50)
+    private String tipo; // Ejemplo: "Platillo", "Bebida", "Postre"
+
+    // ===== Constructores =====
+    public Producto() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Producto(String nombre, double precio, String tipo) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.tipo = tipo;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    // ===== Getters y Setters =====
+    public int getIdProducto() {
+        return idProducto;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Producto)) {
-            return false;
-        }
-        Producto other = (Producto) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     @Override
     public String toString() {
-        return "Entidades.Producto[ id=" + id + " ]";
+        return "Producto{" +
+                "idProducto=" + idProducto +
+                ", nombre='" + nombre + '\'' +
+                ", precio=" + precio +
+                ", tipo='" + tipo + '\'' +
+                '}';
     }
-    
 }
