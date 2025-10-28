@@ -428,7 +428,7 @@ public class FrmComandas extends JFrame {
             if (p == null) throw new IllegalStateException("Producto no encontrado: " + nombreProd);
 
             DetalleComanda d = new DetalleComanda();
-            d.setIdProducto(p.getIdProducto());
+            d.setProducto(p);
             d.setCantidad(cantidad);
             d.setPrecioUnitario(precio);
             d.setTotalProducto(total);

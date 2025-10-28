@@ -1,11 +1,9 @@
-
 package Negocio;
 
-import ConexionBD.ConexionBD;
+import ConexionBD.ConexionBD; 
 import DAOs.ComandaDAO;
 import Entidades.Comanda;
 import Entidades.DetalleComanda;
-import Entidades.Producto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,9 +18,6 @@ import java.util.*;
  * - Valida que haya ≥ 1 producto en captura.
  * - Calcula total acumulado.
  * - Normaliza estado (ABIERTA/ENTREGADA/CANCELADA).
- *
- * NOTA: Este servicio delega la persistencia a ComandaDAO (que debes implementar
- * con una sola transacción para comanda + detalles). Si quieres, te paso ese DAO.
  */
 public class ComandaService {
 
@@ -34,7 +29,6 @@ public class ComandaService {
         String prefijo = "OB-" + fecha + "-";
         int consecutivo = 1;
 
-        // Contar cuántas comandas existen hoy para asignar el siguiente consecutivo.
         String sql = "SELECT COUNT(*) AS total FROM comanda WHERE folio LIKE ?";
         try (Connection con = ConexionBD.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -43,7 +37,7 @@ public class ComandaService {
                 if (rs.next()) consecutivo = rs.getInt("total") + 1;
             }
         } catch (SQLException e) {
-            // Si hay problema de conexión, igual devolvemos un folio válido con 001
+            // si falla la conexión, no reventamos el folio
             consecutivo = Math.max(1, consecutivo);
         }
         return prefijo + String.format("%03d", consecutivo);
@@ -59,25 +53,21 @@ public class ComandaService {
 
     /** Calcula el total acumulado a partir de los detalles. */
     public double calcularTotal(List<DetalleComanda> detalles) {
-        if (detalles == null || detalles.isEmpty())
-            return 0.0;
+        if (detalles == null || detalles.isEmpty()) return 0.0;
         double total = 0.0;
         for (DetalleComanda d : detalles) {
-            // Si ya viene totalProducto, úsalo; si no, calcula a partir de cantidad * precioUnitario.
-            if (d.getTotalProducto() > 0) {
-                total += d.getTotalProducto();
-            } else {
-                total += d.getCantidad() * d.getPrecioUnitario();
-            }
+            total += (d.getTotalProducto() > 0)
+                    ? d.getTotalProducto()
+                    : d.getCantidad() * d.getPrecioUnitario();
         }
         return Math.round(total * 100.0) / 100.0;
     }
 
     /**
      * Valida que la comanda tenga los campos mínimos para persistir.
-     * - Mesa (string) no vacía
+     * - Mesa no vacía
      * - Estado válido
-     * - Al menos un detalle con cantidad > 0
+     * - Al menos un detalle con cantidad > 0 y producto asignado
      */
     public void validarComanda(Comanda c, List<DetalleComanda> detalles) {
         if (c == null) throw new IllegalArgumentException("Comanda nula.");
@@ -85,8 +75,10 @@ public class ComandaService {
             throw new IllegalArgumentException("Debes indicar la mesa.");
         if (detalles == null || detalles.isEmpty())
             throw new IllegalArgumentException("La comanda debe tener al menos un producto.");
+
         for (DetalleComanda d : detalles) {
-            if (d.getIdProducto() <= 0)
+            // **CAMBIO clave**: ya no existe getIdProducto(); ahora es getProducto()
+            if (d.getProducto() == null || d.getProducto().getIdProducto() <= 0)
                 throw new IllegalArgumentException("Detalle con producto inválido.");
             if (d.getCantidad() <= 0)
                 throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
@@ -95,10 +87,9 @@ public class ComandaService {
         }
     }
 
-    /**
-     * Construye una comanda lista para persistir (folio, fecha, total, estado normalizado).
-     */
-    public Comanda prepararComanda(String mesa, String clienteFrecuente, List<DetalleComanda> detalles, String estado) {
+    /** Construye una comanda lista para persistir. */
+    public Comanda prepararComanda(String mesa, String clienteFrecuente,
+                                   List<DetalleComanda> detalles, String estado) {
         if (mesa == null || mesa.isBlank())
             throw new IllegalArgumentException("La mesa es obligatoria.");
         if (detalles == null || detalles.isEmpty())
@@ -118,22 +109,26 @@ public class ComandaService {
 
     /* ==================== Delegación al DAO ==================== */
 
-    public boolean crearComandaConDetalles(Comanda c, java.util.List<Entidades.DetalleComanda> detalles) {
-    validarComanda(c, detalles);
-    if (!"ABIERTA".equalsIgnoreCase(c.getEstado()))
-        throw new IllegalStateException("Solo se pueden registrar nuevas comandas en estado ABIERTA.");
+    // **CAMBIO de firma**: usa List<DetalleComanda> (no fully-qualified raro)
+    public boolean crearComandaConDetalles(Comanda c, List<DetalleComanda> detalles) {
+        validarComanda(c, detalles);
+        if (!"ABIERTA".equalsIgnoreCase(c.getEstado()))
+            throw new IllegalStateException("Solo se pueden registrar nuevas comandas en estado ABIERTA.");
 
-    // ENLAZAR detalles -> comanda (necesario para cascade)
-    c.getDetalles().clear();
-    for (Entidades.DetalleComanda d : detalles) {
-        c.addDetalle(d); // setComanda + add a la lista
+        // Enlazar la relación bidireccional antes de persistir (para cascade)
+        if (c.getDetalles() != null) {
+            c.getDetalles().clear();
+        }
+        for (DetalleComanda d : detalles) {
+            c.addDetalle(d);         // <-- ESTE método debe existir en Comanda (ver nota abajo)
+        }
+
+        // recalcular por si hubo cambios
+        c.setTotal(calcularTotal(detalles));
+
+        return comandaDAO.agregarComanda(c);
     }
 
-    // total ya calculado antes (o recalcula aquí)
-    return comandaDAO.agregarComanda(c);
-}
-
-    // Los demás métodos son pasarelas hacia el DAO (listar, obtener, actualizar, eliminar)
     public List<Comanda> listarComandas() { return comandaDAO.listarComandas(); }
 
     public Comanda obtenerComanda(int idComanda) {
