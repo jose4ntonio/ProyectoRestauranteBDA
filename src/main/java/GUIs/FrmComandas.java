@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 /**
  * GUI de Comandas:
  *  - Genera folio y fecha automáticamente
