@@ -1,94 +1,69 @@
-
 package DAOs;
 
-import ConexionBD.ConexionBD;
 import Entidades.Ingrediente;
-import java.sql.*;
-import java.util.ArrayList;
+import Persistencia.JPAUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class IngredienteDAO {
 
     public boolean agregarIngrediente(Ingrediente i) {
-        String sql = "INSERT INTO ingrediente(nombre, unidad, stock) VALUES(?,?,?)";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, i.getNombre());
-            ps.setString(2, i.getUnidad());
-            ps.setDouble(3, i.getStock());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(i);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public boolean actualizarIngrediente(Ingrediente i) {
-        String sql = "UPDATE ingrediente SET nombre=?, unidad=?, stock=? WHERE idIngrediente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, i.getNombre());
-            ps.setString(2, i.getUnidad());
-            ps.setDouble(3, i.getStock());
-            ps.setInt(4, i.getIdIngrediente());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(i);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public boolean eliminarIngrediente(int idIngrediente) {
-        String sql = "DELETE FROM ingrediente WHERE idIngrediente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idIngrediente);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Ingrediente ref = em.find(Ingrediente.class, idIngrediente);
+            if (ref != null) em.remove(ref);
+            em.getTransaction().commit();
+            return ref != null;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public Ingrediente obtenerIngrediente(int idIngrediente) {
-        String sql = "SELECT * FROM ingrediente WHERE idIngrediente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idIngrediente);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Ingrediente i = new Ingrediente(
-                        rs.getString("nombre"),
-                        rs.getString("unidad"),
-                        rs.getDouble("stock")
-                );
-                i.setIdIngrediente(rs.getInt("idIngrediente"));
-                return i;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Ingrediente.class, idIngrediente);
+        } finally { em.close(); }
     }
 
     public List<Ingrediente> listarIngredientes() {
-        List<Ingrediente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM ingrediente";
-        try (Connection con = ConexionBD.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                Ingrediente i = new Ingrediente(
-                        rs.getString("nombre"),
-                        rs.getString("unidad"),
-                        rs.getDouble("stock")
-                );
-                i.setIdIngrediente(rs.getInt("idIngrediente"));
-                lista.add(i);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return lista;
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Ingrediente> q = em.createQuery(
+                    "SELECT i FROM Ingrediente i ORDER BY i.idIngrediente DESC", Ingrediente.class);
+            return q.getResultList();
+        } finally { em.close(); }
     }
 }

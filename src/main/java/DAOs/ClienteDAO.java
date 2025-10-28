@@ -1,105 +1,82 @@
-
 package DAOs;
 
-import ConexionBD.ConexionBD;
 import Entidades.Cliente;
-
-import java.sql.*;
-import java.util.ArrayList;
+import Persistencia.JPAUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class ClienteDAO {
 
     public boolean agregarCliente(Cliente c) {
-        String sql = "INSERT INTO cliente(nombre, apellido, telefono, correo, direccion, tipo) VALUES(?,?,?,?,?,?)";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, c.getNombre());
-            ps.setString(2, c.getApellido());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getCorreo());
-            ps.setString(5, c.getDireccion());
-            ps.setString(6, c.getTipo());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(c);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public boolean actualizarCliente(Cliente c) {
-        String sql = "UPDATE cliente SET nombre=?, apellido=?, telefono=?, correo=?, direccion=?, tipo=? WHERE idCliente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, c.getNombre());
-            ps.setString(2, c.getApellido());
-            ps.setString(3, c.getTelefono());
-            ps.setString(4, c.getCorreo());
-            ps.setString(5, c.getDireccion());
-            ps.setString(6, c.getTipo());
-            ps.setInt(7, c.getIdCliente());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(c);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public boolean eliminarCliente(int idCliente) {
-        String sql = "DELETE FROM cliente WHERE idCliente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idCliente);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Cliente ref = em.find(Cliente.class, idCliente);
+            if (ref != null) em.remove(ref);
+            em.getTransaction().commit();
+            return ref != null;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
-        }
+        } finally { em.close(); }
     }
 
     public Cliente obtenerCliente(int idCliente) {
-        String sql = "SELECT * FROM cliente WHERE idCliente=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idCliente);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Cliente(
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("telefono"),
-                        rs.getString("correo"),
-                        rs.getString("direccion"),
-                        rs.getString("tipo")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Cliente.class, idCliente);
+        } finally { em.close(); }
     }
 
     public List<Cliente> listarClientes() {
-        List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT * FROM cliente";
-        try (Connection con = ConexionBD.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                Cliente c = new Cliente(
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("telefono"),
-                        rs.getString("correo"),
-                        rs.getString("direccion"),
-                        rs.getString("tipo")
-                );
-                c.setIdCliente(rs.getInt("idCliente"));
-                lista.add(c);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return lista;
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Cliente> q = em.createQuery(
+                    "SELECT c FROM Cliente c ORDER BY c.idCliente DESC", Cliente.class);
+            return q.getResultList();
+        } finally { em.close(); }
+    }
+
+    // (Opcional) Búsqueda por nombre/apellido
+    public List<Cliente> buscarPorNombreLike(String texto) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Cliente> q = em.createQuery(
+                    "SELECT c FROM Cliente c " +
+                    "WHERE LOWER(CONCAT(c.nombre,' ',COALESCE(c.apellido,''))) LIKE LOWER(:t) " +
+                    "ORDER BY c.nombre", Cliente.class);
+            q.setParameter("t", "%" + texto + "%");
+            return q.getResultList();
+        } finally { em.close(); }
     }
 }

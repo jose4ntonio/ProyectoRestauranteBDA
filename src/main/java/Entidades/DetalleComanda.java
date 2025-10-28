@@ -1,23 +1,23 @@
-
 package Entidades;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "detalle_comanda")
 public class DetalleComanda implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idDetalleComanda;
+    private int idDetalle;
 
-    @Column(nullable = false)
-    private int idComanda;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "idComanda")
+    private Comanda comanda;
 
-    @Column(nullable = false)
+    @Column(name = "idProducto", nullable = false)
     private int idProducto;
 
     @Column(nullable = false)
@@ -29,85 +29,35 @@ public class DetalleComanda implements Serializable {
     @Column(nullable = false)
     private double totalProducto;
 
-    @Column(length = 200)
-    private String comentarios; // Ej. "Sin picante", "Término medio", etc.
+    @Column(length = 255)
+    private String comentarios;
 
-    // ===== Constructores =====
-    public DetalleComanda() {
-    }
+    // === Getters y Setters ===
+    public int getIdDetalle() { return idDetalle; }
+    public void setIdDetalle(int idDetalle) { this.idDetalle = idDetalle; }
 
-    public DetalleComanda(int idComanda, int idProducto, int cantidad, double precioUnitario, double totalProducto, String comentarios) {
-        this.idComanda = idComanda;
-        this.idProducto = idProducto;
-        this.cantidad = cantidad;
-        this.precioUnitario = precioUnitario;
-        this.totalProducto = totalProducto;
-        this.comentarios = comentarios;
-    }
+    public Comanda getComanda() { return comanda; }
+    public void setComanda(Comanda comanda) { this.comanda = comanda; }
 
-    // ===== Getters y Setters =====
-    public int getIdDetalleComanda() {
-        return idDetalleComanda;
-    }
+    public int getIdProducto() { return idProducto; }
+    public void setIdProducto(int idProducto) { this.idProducto = idProducto; }
 
-    public void setIdDetalleComanda(int idDetalleComanda) {
-        this.idDetalleComanda = idDetalleComanda;
-    }
+    public int getCantidad() { return cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
 
-    public int getIdComanda() {
-        return idComanda;
-    }
+    public double getPrecioUnitario() { return precioUnitario; }
+    public void setPrecioUnitario(double precioUnitario) { this.precioUnitario = precioUnitario; }
 
-    public void setIdComanda(int idComanda) {
-        this.idComanda = idComanda;
-    }
+    public double getTotalProducto() { return totalProducto; }
+    public void setTotalProducto(double totalProducto) { this.totalProducto = totalProducto; }
 
-    public int getIdProducto() {
-        return idProducto;
-    }
+    public String getComentarios() { return comentarios; }
+    public void setComentarios(String comentarios) { this.comentarios = comentarios; }
 
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public double getPrecioUnitario() {
-        return precioUnitario;
-    }
-
-    public void setPrecioUnitario(double precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
-
-    public double getTotalProducto() {
-        return totalProducto;
-    }
-
-    public void setTotalProducto(double totalProducto) {
-        this.totalProducto = totalProducto;
-    }
-
-    public String getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(String comentarios) {
-        this.comentarios = comentarios;
-    }
-
-    // ===== toString =====
     @Override
     public String toString() {
         return "DetalleComanda{" +
-                "idDetalleComanda=" + idDetalleComanda +
-                ", idComanda=" + idComanda +
+                "idDetalle=" + idDetalle +
                 ", idProducto=" + idProducto +
                 ", cantidad=" + cantidad +
                 ", precioUnitario=" + precioUnitario +

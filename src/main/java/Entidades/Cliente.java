@@ -1,8 +1,9 @@
 
 package Entidades;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
-import javax.persistence.*;
+
 
 /**
  *

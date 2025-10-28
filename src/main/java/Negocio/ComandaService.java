@@ -118,13 +118,20 @@ public class ComandaService {
 
     /* ==================== Delegación al DAO ==================== */
 
-    public boolean crearComandaConDetalles(Comanda c, List<DetalleComanda> detalles) {
-        validarComanda(c, detalles);
-        // Regla del enunciado: no permitir cambios si ya está ENTREGADA o CANCELADA (se previene desde GUI)
-        if (!"ABIERTA".equalsIgnoreCase(c.getEstado()))
-            throw new IllegalStateException("Solo se pueden registrar nuevas comandas en estado ABIERTA.");
-        return comandaDAO.agregarComanda(c, detalles);
+    public boolean crearComandaConDetalles(Comanda c, java.util.List<Entidades.DetalleComanda> detalles) {
+    validarComanda(c, detalles);
+    if (!"ABIERTA".equalsIgnoreCase(c.getEstado()))
+        throw new IllegalStateException("Solo se pueden registrar nuevas comandas en estado ABIERTA.");
+
+    // ENLAZAR detalles -> comanda (necesario para cascade)
+    c.getDetalles().clear();
+    for (Entidades.DetalleComanda d : detalles) {
+        c.addDetalle(d); // setComanda + add a la lista
     }
+
+    // total ya calculado antes (o recalcula aquí)
+    return comandaDAO.agregarComanda(c);
+}
 
     // Los demás métodos son pasarelas hacia el DAO (listar, obtener, actualizar, eliminar)
     public List<Comanda> listarComandas() { return comandaDAO.listarComandas(); }

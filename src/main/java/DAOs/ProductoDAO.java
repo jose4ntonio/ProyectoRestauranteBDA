@@ -1,95 +1,107 @@
-
 package DAOs;
 
-import ConexionBD.ConexionBD;
 import Entidades.Producto;
-
-import java.sql.*;
-import java.util.ArrayList;
+import Persistencia.JPAUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class ProductoDAO {
 
     public boolean agregarProducto(Producto p) {
-        String sql = "INSERT INTO producto(nombre, precio, tipo) VALUES(?,?,?)";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, p.getNombre());
-            ps.setDouble(2, p.getPrecio());
-            ps.setString(3, p.getTipo());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(p);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
+        } finally {
+            em.close();
         }
     }
 
     public boolean actualizarProducto(Producto p) {
-        String sql = "UPDATE producto SET nombre=?, precio=?, tipo=? WHERE idProducto=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, p.getNombre());
-            ps.setDouble(2, p.getPrecio());
-            ps.setString(3, p.getTipo());
-            ps.setInt(4, p.getIdProducto());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(p);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
+        } finally {
+            em.close();
         }
     }
 
     public boolean eliminarProducto(int idProducto) {
-        String sql = "DELETE FROM producto WHERE idProducto=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idProducto);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Producto ref = em.find(Producto.class, idProducto);
+            if (ref != null) em.remove(ref);
+            em.getTransaction().commit();
+            return ref != null;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            ex.printStackTrace();
             return false;
+        } finally {
+            em.close();
         }
     }
 
     public Producto obtenerProducto(int idProducto) {
-        String sql = "SELECT * FROM producto WHERE idProducto=?";
-        try (Connection con = ConexionBD.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idProducto);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Producto p = new Producto(
-                        rs.getString("nombre"),
-                        rs.getDouble("precio"),
-                        rs.getString("tipo")
-                );
-                p.setIdProducto(rs.getInt("idProducto"));
-                return p;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Producto.class, idProducto);
+        } finally {
+            em.close();
         }
-        return null;
     }
 
     public List<Producto> listarProductos() {
-        List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto";
-        try (Connection con = ConexionBD.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                Producto p = new Producto(
-                        rs.getString("nombre"),
-                        rs.getDouble("precio"),
-                        rs.getString("tipo")
-                );
-                p.setIdProducto(rs.getInt("idProducto"));
-                lista.add(p);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Producto> q = em.createQuery(
+                    "SELECT p FROM Producto p ORDER BY p.idProducto DESC", Producto.class);
+            return q.getResultList();
+        } finally {
+            em.close();
         }
-        return lista;
+    }
+
+    
+    public List<Producto> buscarPorNombreLike(String texto) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Producto> q = em.createQuery(
+                    "SELECT p FROM Producto p " +
+                    "WHERE LOWER(p.nombre) LIKE LOWER(:t) " +
+                    "ORDER BY p.nombre", Producto.class);
+            q.setParameter("t", "%" + texto + "%");
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    // Útil para validar duplicado exacto
+    public Producto buscarPorNombreExacto(String nombre) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Producto> q = em.createQuery(
+                    "SELECT p FROM Producto p WHERE LOWER(p.nombre) = LOWER(:n)", Producto.class);
+            q.setParameter("n", nombre);
+            return q.getResultStream().findFirst().orElse(null);
+        } finally {
+            em.close();
+        }
     }
 }

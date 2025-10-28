@@ -16,6 +16,7 @@ GUIs\FrmIngredientes$1.class
 Interfaces\IComandaDAO.class
 GUIs\FrmMenu.class
 Negocio\MesaService.class
+Persistencia\JPAUtil.class
 GUIs\FrmProductos$1.class
 DAOs\ClienteDAO.class
 Negocio\ComandaService.class
@@ -29,6 +30,7 @@ GUIs\FrmClientes.class
 GUIs\FrmComandas$1.class
 Entidades\Ingrediente.class
 Entidades\Comanda.class
+Pruebas\TestJPAComanda.class
 ConexionBD\ConexionBD.class
 Negocio\IngredienteService.class
 Entidades\Mesa.class
