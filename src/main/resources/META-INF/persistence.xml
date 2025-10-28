@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.2"
-             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://www.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
 
-  <persistence-unit name="ConnectionPU" transaction-type="RESOURCE_LOCAL">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <persistence-unit name="RestaurantePU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-    <class>Entidades.Mesa</class>
-    <class>Entidades.ClienteFrecuente</class>
-    <class>Entidades.Ingrediente</class>
-    <class>Entidades.Producto</class>
-    <class>Entidades.Comanda</class>
-    <class>Entidades.ComandaDetalle</class>
+        <class>Entidades.Producto</class>
+        <class>Entidades.Ingrediente</class>
+        <class>Entidades.Cliente</class>
+        <class>Entidades.Comanda</class>
+        <class>Entidades.DetalleComanda</class>
+        <class>Entidades.Mesa</class>
 
-    <properties>
-      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.url"
-                value="jdbc:mysql://localhost:3306/restaurante?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=America/Hermosillo"/>
-      <property name="javax.persistence.jdbc.user" value="Donato"/>
-      <property name="javax.persistence.jdbc.password" value="809865"/>
+        <properties>
+            <!-- Configuración de conexión -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/restaurante?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=America/Mexico_City"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
 
-      <!-- Dev: recrea el esquema limpio -->
-      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <!-- Generación automática de tablas -->
+            <property name="javax.persistence.schema-generation.database.action" value="update"/>
 
-      <!-- Logs útiles -->
-      <property name="eclipselink.logging.level" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-
-      <!-- Lazy/optimización -->
-      <property name="eclipselink.weaving" value="true"/>
-    </properties>
-  </persistence-unit>
+            <!-- Logs de SQL -->
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.target-database" value="MySQL"/>
+        </properties>
+    </persistence-unit>
 </persistence>
-
