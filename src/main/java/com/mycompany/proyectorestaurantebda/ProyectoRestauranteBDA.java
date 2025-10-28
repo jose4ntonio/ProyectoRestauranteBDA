@@ -12,10 +12,6 @@ public class ProyectoRestauranteBDA {
 
     public static void main(String[] args) {
 
-        
-        
-        
-
         // --- Zona horaria y locale (reporteo/fechas coherentes con Hermosillo) ---
         TimeZone.setDefault(TimeZone.getTimeZone("America/Hermosillo"));
         Locale.setDefault(new Locale("es", "MX"));
@@ -29,19 +25,6 @@ public class ProyectoRestauranteBDA {
                 }
             }
         } catch (Exception ignored) {}
-
-        // --- (Opcional) PRIMERA VEZ: generar esquema con JPA y EclipseLink/Hibernate ---
-        // Solo si vas a dejar que JPA cree la BD una vez. Luego comenta estas 2 líneas
-        // y cambia schema-generation a "none"/"validate" en persistence.xml.
-        /*
-        try {
-            javax.persistence.EntityManagerFactory emf =
-                    javax.persistence.Persistence.createEntityManagerFactory("ConnectionPU");
-            emf.close();
-        } catch (Throwable t) {
-            System.err.println("Aviso: no se pudo inicializar JPA (puede no ser necesario). " + t.getMessage());
-        }
-        */
 
         // --- Hook de cierre para soltar la conexión JDBC si quedó abierta ---
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

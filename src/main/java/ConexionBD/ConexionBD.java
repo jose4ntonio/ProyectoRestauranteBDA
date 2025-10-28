@@ -26,20 +26,6 @@ public class ConexionBD {
             return null;
         }
     }
-    
-//    // Método para obtener la conexión
-//    public static Connection getConnection() {
-//        if (conexion == null) {
-//            try {
-//                conexion = DriverManager.getConnection(URL, USER, PASSWORD);
-//                System.out.println("Conexión a la base de datos establecida correctamente.");
-//            } catch (SQLException e) {
-//                System.err.println("Error al conectar a la base de datos: " + e.getMessage());
-//                e.printStackTrace();
-//            }
-//        }
-//        return conexion;
-//    }
 
     // Método para cerrar la conexión
     public static void cerrarConexion() {
