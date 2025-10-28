@@ -7,12 +7,12 @@
   <persistence-unit name="ConnectionPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-    <class>accesoadatos.Mesa</class>
-    <class>accesoadatos.ClienteFrecuente</class>
-    <class>accesoadatos.Ingrediente</class>
-    <class>accesoadatos.Producto</class>
-    <class>accesoadatos.Comanda</class>
-    <class>accesoadatos.ComandaDetalle</class>
+    <class>Entidades.Mesa</class>
+    <class>Entidades.ClienteFrecuente</class>
+    <class>Entidades.Ingrediente</class>
+    <class>Entidades.Producto</class>
+    <class>Entidades.Comanda</class>
+    <class>Entidades.ComandaDetalle</class>
 
     <properties>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

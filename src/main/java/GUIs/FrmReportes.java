@@ -135,6 +135,19 @@ public class FrmReportes extends JFrame {
 
         tabs.addTab("Reporte de Clientes", tabClientes);
         root.add(tabs, BorderLayout.CENTER);
+        
+        // ===== BOTONES INFERIORES =====
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        JButton btnVolver = new JButton("Volver");
+        
+        panelBotones.add(btnVolver);
+        root.add(panelBotones, BorderLayout.SOUTH);
+        
+        // Acción del botón Volver
+        btnVolver.addActionListener(e -> {
+            dispose(); // Cierra esta ventana
+            new FrmMenuPrincipal().setVisible(true); // Abre el menú principal
+        });
 
         setContentPane(root);
     }

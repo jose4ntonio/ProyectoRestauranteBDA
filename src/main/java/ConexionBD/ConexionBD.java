@@ -8,8 +8,8 @@ import java.sql.SQLException;
 public class ConexionBD {
 
     private static final String URL = "jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC";
-    private static final String USER = ""; // Cambia por tu usuario
-    private static final String PASSWORD = ""; // Cambia por tu contraseña
+    private static final String USER = "Donato"; // Cambia por tu usuario
+    private static final String PASSWORD = "809865"; // Cambia por tu contraseña
 
     private static Connection conexion;
 
