@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package ConexionBD;
 
 import java.sql.Connection;
@@ -10,7 +7,7 @@ import java.sql.SQLException;
 
 public class ConexionBD {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/restaurante_itson?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC";
     private static final String USER = ""; // Cambia por tu usuario
     private static final String PASSWORD = ""; // Cambia por tu contraseña
 
