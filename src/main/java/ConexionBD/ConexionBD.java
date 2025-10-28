@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public class ConexionBD {
 
+
     private static final String URL = "jdbc:mysql://localhost:3306/restaurante_itson?useSSL=true&serverTimezone=UTC";
     private static final String USER = "Donato"; // Cambia por tu usuario
     private static final String PASSWORD = "809865"; // Cambia por tu contraseña
