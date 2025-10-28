@@ -7,30 +7,32 @@
   <persistence-unit name="ConnectionPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-    <class>accesoadatos.Mesa</class>
-    <class>accesoadatos.ClienteFrecuente</class>
-    <class>accesoadatos.Ingrediente</class>
-    <class>accesoadatos.Producto</class>
-    <class>accesoadatos.Comanda</class>
-    <class>accesoadatos.ComandaDetalle</class>
+    <!-- TUS entidades reales -->
+    <class>Entidades.Cliente</class>
+    <class>Entidades.Producto</class>
+    <class>Entidades.Ingrediente</class>
+    <class>Entidades.Comanda</class>
+    <class>Entidades.DetalleComanda</class>
+    <class>Entidades.Mesa</class>
 
     <properties>
+      <!-- Conexión -->
       <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.url"
                 value="jdbc:mysql://localhost:3306/restaurante?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=America/Hermosillo"/>
       <property name="javax.persistence.jdbc.user" value="Donato"/>
       <property name="javax.persistence.jdbc.password" value="809865"/>
 
-      <!-- Dev: recrea el esquema limpio -->
+      <!-- SOLO para la primera corrida (crea limpio y BORRA lo existente) -->
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
 
-      <!-- Logs útiles -->
+      <!-- Logs -->
       <property name="eclipselink.logging.level" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
 
-      <!-- Lazy/optimización -->
+      <!-- Opcional: especificar plataforma -->
+      <property name="eclipselink.target-database" value="MySQL"/>
       <property name="eclipselink.weaving" value="true"/>
     </properties>
   </persistence-unit>
 </persistence>
-
