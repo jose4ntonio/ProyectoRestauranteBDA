@@ -14,10 +14,12 @@ Interfaces\IIngredienteDAO.class
 com\mycompany\proyectorestaurantebda\ProyectoRestauranteBDA.class
 GUIs\FrmIngredientes$1.class
 Interfaces\IComandaDAO.class
+GUIs\FrmClienteSelector.class
 GUIs\FrmMenu.class
 Negocio\MesaService.class
 Pruebas\TestEndToEnd.class
 Persistencia\JPAUtil.class
+GUIs\FrmClienteSelector$2.class
 GUIs\FrmProductos$1.class
 DAOs\ClienteDAO.class
 Negocio\ComandaService.class
@@ -26,6 +28,7 @@ Negocio\ProductoService.class
 Entidades\DetalleComanda.class
 Interfaces\IClienteDAO.class
 GUIs\FrmClientes$1.class
+GUIs\FrmClienteSelector$1.class
 Negocio\ClienteService.class
 GUIs\FrmClientes.class
 GUIs\FrmComandas$1.class

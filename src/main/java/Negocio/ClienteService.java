@@ -32,6 +32,12 @@ public class ClienteService {
         }
         return clienteDAO.agregarCliente(c);
     }
+    
+   // En Negocio.ClienteService
+    public List<Cliente> buscar(String q) {
+        if (q == null) q = "";
+        return clienteDAO.buscar(q);
+    }
 
     public boolean actualizarCliente(Cliente c) {
         if (c == null || c.getIdCliente() <= 0)

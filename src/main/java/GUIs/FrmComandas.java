@@ -1,6 +1,7 @@
 
 package GUIs;
 
+import Entidades.Cliente;
 import Negocio.ComandaService;
 import Negocio.ProductoService;
 import Entidades.Comanda;
@@ -116,7 +117,7 @@ public class FrmComandas extends JFrame {
         tablaProductos = new JTable(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"#", "Producto", "Cantidad", "Precio", "Total", "Comentarios"}
-        ) {
+        ){
             @Override public boolean isCellEditable(int r, int c) { return false; }
             @Override public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
@@ -154,6 +155,23 @@ public class FrmComandas extends JFrame {
         btnEntregar = new JButton("Marcar como Entregada");
         btnCancelar = new JButton("Cancelar");
         btnVolver = new JButton("Volver");
+        
+        btnBuscarCliente.addActionListener(e -> {
+    FrmClienteSelector dlg = new FrmClienteSelector(this);
+    dlg.setVisible(true);
+    Entidades.Cliente sel = dlg.getSeleccionado();
+    if (sel != null) {
+        // Muestra nombre en el campo y guarda referencia si la usas
+        txtBuscarCliente.setText(
+            (sel.getNombre() != null ? sel.getNombre() : "") + " " +
+            (sel.getApellido() != null ? sel.getApellido() : "")
+        );
+        // Si guardas el nombre en la comanda como string:
+        // this.clienteFrecuenteActual = txtBuscarCliente.getText().trim();
+        // O si luego piensas guardar por id, conserva el objeto:
+        // this.clienteSeleccionado = sel;
+    }
+});
 
         panelTotal.add(lblTotal);
         panelTotal.add(txtTotal);
@@ -464,7 +482,7 @@ public class FrmComandas extends JFrame {
     private void onBuscarCliente() {
         // Aquí podrías abrir un diálogo que liste clientes frecuentes (ClienteService)
         // Por ahora, simulamos que el texto ya es el filtro y lo dejamos en el campo.
-        JOptionPane.showMessageDialog(this, "Búsqueda de cliente por texto.\nIntegra aquí tu FrmClientes o un selector.");
+        //JOptionPane.showMessageDialog(this, "Búsqueda de cliente por texto.\nIntegra aquí tu FrmClientes o un selector.");
     }
 
     private void onAsociarCliente() {
